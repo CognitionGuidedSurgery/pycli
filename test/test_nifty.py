@@ -21,29 +21,26 @@ def prettify(elem):
 
 class BaseTests(unittest.TestCase):
     def test_reading_xml_reg_aladin(self):
-        executable = pycli.Executable.from_xml(os.path.join(ROOT, "reg_aladin.xml"))
+        executable = clictk.Executable.from_xml(os.path.join(ROOT, "reg_aladin.xml"))
         print repr(executable)
 
         print prettify(executable.as_xml())
 
 
     def test_reading_xml_reg_f3d(self):
-        executable = pycli.Executable.from_xml(os.path.join(ROOT, "reg_f3d.xml"))
+        executable = clictk.Executable.from_xml(os.path.join(ROOT, "reg_f3d.xml"))
         print executable
 
 
     def test_reading_xml_reg_jacobian(self):
-        executable = pycli.Executable.from_xml(os.path.join(ROOT, "reg_jacobian.xml"))
+        executable = clictk.Executable.from_xml(os.path.join(ROOT, "reg_jacobian.xml"))
         print executable
 
 
     def test_reading_xml_reg_tools(self):
-        executable = pycli.Executable.from_xml(os.path.join(ROOT, "reg_tools.xml"))
+        executable = clictk.Executable.from_xml(os.path.join(ROOT, "reg_tools.xml"))
         print executable
 
 
     def test_exec_xml_stub(self):
         return True
-
-
-from pycli import *
