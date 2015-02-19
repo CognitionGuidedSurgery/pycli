@@ -4,7 +4,7 @@ __author__ = 'Alexander Weigl <Alexander.Weigl@student.kit.edu>'
 __date__ = "2015-02-19"
 __version__ = "0.1"
 
-import pycli, os.path, sys
+import clictk, os.path, sys
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 

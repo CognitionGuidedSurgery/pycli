@@ -12,5 +12,5 @@ Getting Started
 Interface
 ---------
 
-.. automodule:: pycli
+.. automodule:: clictk
    :members:
