@@ -3,8 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to pycli's documentation!
-=================================
+Welcome to clictk's documentation!
+==================================
 
 Getting Started
 ---------------
@@ -12,5 +12,11 @@ Getting Started
 Interface
 ---------
 
+.. module:: clictk
+
+
+   .. cpp:member:: ABC
+
 .. automodule:: clictk
    :members:
+   :undoc-members:
