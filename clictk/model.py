@@ -5,6 +5,8 @@
 import xml.etree.ElementTree as ET
 import subprocess
 
+__all__ = ["Parameter", "ParameterGroup", "Executable", "XMLArgumentNotSupportedByExecutable"]
+
 
 class ParameterGroup(list):
     """A list of multiple :py:class:`Parameter`.

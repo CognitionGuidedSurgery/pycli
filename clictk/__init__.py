@@ -12,3 +12,5 @@ __version__ = "0.1"
 
 from .model import *
 from .argparseutil import *
+
+print dir()

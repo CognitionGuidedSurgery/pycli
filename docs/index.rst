@@ -12,11 +12,13 @@ Getting Started
 Interface
 ---------
 
-.. module:: clictk
-
-
-   .. cpp:member:: ABC
-
 .. automodule:: clictk
+
+   :members:
+   :undoc-members:
+
+
+.. automodule:: clictk.model
+
    :members:
    :undoc-members:
