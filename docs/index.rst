@@ -13,12 +13,10 @@ Interface
 ---------
 
 .. automodule:: clictk
-
    :members:
    :undoc-members:
 
 
 .. automodule:: clictk.model
-
    :members:
    :undoc-members:
