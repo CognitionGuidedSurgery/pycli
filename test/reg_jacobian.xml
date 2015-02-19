@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Registration.NiftyReg</category>
+  <title>RegJacobian (NiftyReg)</title>
+  <description><![CDATA[NiftyReg module to create Jacobian-based images]]></description>
+  <version>0.0.1</version>
+  <documentation-url>http://cmic.cs.ucl.ac.uk/home/software/</documentation-url>
+  <license>BSD</license>
+  <contributor>Marc Modat (UCL)</contributor>
+  <parameters advanced="false">
+    <label>Input reference image</label>
+    <description>Input images</description>
+    <file fileExtensions=".nii,.nii.gz,.nrrd,.txt,.mat">
+      <name>InTrans</name>
+      <longflag>trans</longflag>
+      <description>Input transformation</description>
+      <label>Input Trans.</label>
+      <default>required</default>
+      <channel>input</channel>
+    </file>
+    <image fileExtensions=".nii,.nii..gz,.nrrd,.png">      <name>referenceImageName</name>
+      <longflag>ref</longflag>
+      <description>Reference image filename, required if the transformation is a spline parametrisation</description>
+      <label>Reference image</label>
+      <default>required</default>
+      <channel>input</channel>
+    </image>
+  </parameters>  <parameters advanced="false">
+    <label>Output image</label>
+    <description>Jacobian determinants or matrices images</description>
+    <image fileExtensions=".nii,.nii.gz,.nrrd,.png">      <name>jacDetImage</name>
+      <longflag>jac</longflag>
+      <description>Jacobian determinant image</description>
+      <label>Jac. det. image</label>
+      <default>jacDetImage.nii</default>
+      <channel>output</channel>
+    </image>    <image fileExtensions=".nii,.nii.gz,.nrrd,.png">      <name>logJacDetImage</name>
+      <longflag>jacL</longflag>
+      <description>Log of the Jacobian determinant image</description>
+      <label>Log. Jac. det. image</label>
+      <default>logJacDetImage.nii</default>
+      <channel>output</channel>
+    </image>    <image fileExtensions=".nii,.nii.gz,.nrrd,.png">      <name>JacMatImage</name>
+      <longflag>jacM</longflag>
+      <description>Jacobian matrix image</description>
+      <label>Jac. mat. image</label>
+      <default>JacMatImage.nii</default>
+      <channel>output</channel>
+    </image>  </parameters>
+</executable>

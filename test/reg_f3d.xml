@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Registration.NiftyReg</category>
+  <title>RegF3D (NiftyReg)</title>
+  <description><![CDATA[Module/executable for local registration (non-rigid) based on a cubic B-Spline deformation model]]></description>
+  <version>0.0.1</version>
+  <documentation-url>http://cmic.cs.ucl.ac.uk/home/software/</documentation-url>
+  <license>BSD</license>
+  <contributor>Marc Modat, Pankaj Daga (UCL)</contributor>
+  <parameters advanced="false">
+    <label>Input images. Reference and floating images are mandatory</label>
+    <description>Input images to perform the registration</description>
+    <image fileExtensions=".nii,.nii.gz,.nrrd,.png">      <name>referenceImageName</name>
+      <longflag>ref</longflag>
+      <description>Reference image filename (also called Target or Fixed)</description>
+      <label>Reference image</label>
+      <default>required</default>
+      <channel>input</channel>
+    </image>    <image fileExtensions=".nii,.nii.gz,.nrrd,.png">      <name>floatingImageName</name>
+      <longflag>flo</longflag>
+      <description>Floating image filename (also called Source or moving)</description>
+      <label>Floating image</label>
+      <default>required</default>
+      <channel>input</channel>
+    </image>    <image fileExtensions=".nii,.nii.gz,.nrrd,.png">      <name>referenceMaskImageName</name>
+      <longflag>rmask</longflag>
+      <description>Reference mask image filename</description>
+      <label>Ref. mask</label>
+      <default></default>
+      <channel>input</channel>
+    </image>  </parameters>
+  <parameters advanced="true">
+    <label>Input affine or non-rigid parametrisation</label>
+    <description>Optional input transformation</description>
+    <file fileExtensions=".txt,.mat">
+      <name>inputAffineName</name>
+      <longflag>inaff</longflag>
+      <description>Affine registration matrix stored as a text file</description>
+      <label>Input affine trans. from RegAladin</label>
+      <default></default>
+      <channel>input</channel>
+    </file>
+    <file fileExtensions=".nii,.nii.gz,.nrrd">
+      <name>inputControlPointPosition</name>
+      <longflag>incpp</longflag>
+      <description>Control point position image from NiftyReg</description>
+      <label>Input trans. from RegF3D</label>
+      <default></default>
+      <channel>input</channel>
+    </file>
+  </parameters>
+  <parameters advanced="false">
+    <label>Registration output</label>
+    <description>Final transformation parametrisation and warped image</description>
+    <file fileExtensions=".nii,.nii.gz,.nrrd">
+      <name>outputCPPFileName</name>
+      <longflag>cpp</longflag>
+      <description>Control point position image</description>
+      <label>Trans. param image</label>
+      <default>outputCPP.nii</default>
+      <channel>output</channel>
+    </file>
+    <image fileExtensions=".nii,.nii.gz,.nrrd,.png">      <name>outputWarpedImageName</name>
+      <longflag>res</longflag>
+      <description>Warped floating image</description>
+      <label>Output warped image</label>
+      <default>outputResult.nii</default>
+      <channel>output</channel>
+    </image>  </parameters>
+  <parameters advanced="true">
+    <label>Spline parametrisation options</label>
+    <description>Spline control point spacing</description>
+    <float>
+      <name>xAxisSpacing</name>
+      <longflag>sx</longflag>
+      <description>Control point spacing along the x-axis in mm (in voxel if negative value)</description>
+      <label>x-axis spacing</label>
+      <default>-5</default>
+    </float>
+    <float>
+      <name>yAxisSpacing</name>
+      <longflag>sy</longflag>
+      <description>Control point spacing along the y-axis in mm (in voxel if negative value)</description>
+      <label>y-axis spacing</label>
+      <default>-5</default>
+    </float>
+    <float>
+      <name>zAxisSpacing</name>
+      <longflag>sz</longflag>
+      <description>Control point spacing along the z-axis in mm (in voxel if negative value)</description>
+      <label>z-axis spacing</label>
+      <default>-5</default>
+    </float>
+  </parameters>
+  <parameters advanced="true">
+    <label>Image intensity parameters</label>
+    <description>Intensity rescaling and thresholding</description>
+    <float>
+      <name>smoothReferenceWidth</name>
+      <longflag>smooR</longflag>
+      <description>Standard deviation in mm (voxel if negative) of the Gaussian kernel used to smooth the reference image</description>
+      <label>Ref .Smooth</label>
+      <default>0</default>
+    </float>
+    <float>
+      <name>smoothFloatingWidth</name>
+      <longflag>smooF</longflag>
+      <description>Standard deviation in mm (voxel if negative) of the Gaussian kernel used to smooth the Floating image</description>
+      <label>Flo. smooth</label>
+      <default>0</default>
+    </float>
+    <float>
+      <name>ReferenceBinNumber</name>
+      <longflag>rbn</longflag>
+      <description>Number of bin to use for the joint histogram computation - Reference image</description>
+      <label>Ref. bin number</label>
+      <default>64</default>
+    </float>
+    <float>
+      <name>FloatingBinNumber</name>
+      <longflag>fbn</longflag>
+      <description>Number of bin to use for the joint histogram computation - Floating image</description>
+      <label>Flo. bin number</label>
+      <default>64</default>
+    </float>
+    <float>
+      <name>ReferenceIntensityLowerThreshold</name>
+      <longflag>rLwTh</longflag>
+      <description>Lower threshold intensity value to apply to the reference image</description>
+      <label>Ref. low thr.</label>
+      <default>-3.4e+38</default>
+    </float>
+    <float>
+      <name>ReferenceIntensityUpperThreshold</name>
+      <longflag>rUpTh</longflag>
+      <description>Upper threshold intensity value to apply to the reference image</description>
+      <label>Ref. up thr.</label>
+      <default>3.4e+38</default>
+    </float>
+    <float>
+      <name>FloatingIntensityLowerThreshold</name>
+      <longflag>fLwTh</longflag>
+      <description>Lower threshold intensity value to apply to the floating image</description>
+      <label>Flo. low thr.</label>
+      <default>-3.4e+38</default>
+    </float>
+    <float>
+      <name>FloatingIntensityUpperThreshold</name>
+      <longflag>fUpTh</longflag>
+      <description>Upper threshold intensity value to apply to the floating image</description>
+      <label>Flo. up thr.</label>
+      <default>3.4e+38</default>
+    </float>
+  </parameters>
+  <parameters advanced="true">
+    <label>Objective function options</label>
+    <description>Objective function options</description>
+    <float>
+      <name>BendingEnergyPenaltyTermWeight</name>
+      <longflag>be</longflag>
+      <description>Weight to apply to the bending energy</description>
+      <label>Bending Energ. weight</label>
+      <default>0.005</default>
+    </float>
+    <float>
+      <name>L2NormPenaltyTermWeight</name>
+      <longflag>l2</longflag>
+      <description>Weight to apply to the L2 norm of the displacement</description>
+      <label>L2 norm weight</label>
+      <default>0</default>
+    </float>
+    <float>
+      <name>JacobianBasedPenaltyTermWeight</name>
+      <longflag>jl</longflag>
+      <description>Weight to apply to the Jacobian based penalty term</description>
+      <label>Jac.-based pen. term</label>
+      <default>0</default>
+    </float>
+    <boolean>
+      <name>NoJacobianBasedPenaltyTermApproximation</name>
+      <longflag>noAppJL</longflag>
+      <description>Do not approximate the Jacobian based penalty term at the control point position only</description>
+      <label>No approx. Jac.-based term</label>
+      <default>false</default>
+    </boolean>
+    <boolean>
+      <name>UseNMI</name>
+      <longflag>nmi</longflag>
+      <description>To use the NMI as a measure of similarity</description>
+      <label>Use NMI</label>
+      <default>true</default>
+    </boolean>
+    <boolean>
+      <name>UseSSD</name>
+      <longflag>ssd</longflag>
+      <description>To use the SSD as a measure of similarity instead of the NMI used by default</description>
+      <label>Use SSD</label>
+      <default>false</default>
+    </boolean>
+    <float>
+      <name>UseLNCC</name>
+      <longflag>lncc</longflag>
+      <description>To use the LNCC as a measure of similarity instead of the NMI used by default and set the Gaussian standard deviation</description>
+      <label>Use LNCC</label>
+      <default>-999999</default>
+    </float>
+    <boolean>
+      <name>Use_KL_divergence</name>
+      <longflag>kld</longflag>
+      <description>To use the KL divergence as a measure of similarity instead of the NMI used by default</description>
+      <label>Use KLD</label>
+      <default>false</default>
+    </boolean>
+  </parameters>
+  <parameters advanced="true">
+    <label>Optimisation options</label>
+    <description>Various optimisation options</description>
+    <integer>
+      <name>levelPyramidNumber</name>
+      <longflag>ln</longflag>
+      <description>Number of level to use to generate the pyramids for the coarse-to-fine approach</description>
+      <label>Level number</label>
+      <default>3</default>
+      <constraints>
+        <minimum>0</minimum>
+        <maximum>10</maximum>
+        <step>1</step>
+      </constraints>
+    </integer>
+    <integer>
+      <name>levelToPerformNumber</name>
+      <longflag>lp</longflag>
+      <description>Number of level to use to run the registration once the pyramids have been created</description>
+      <label>Level to perform</label>
+      <default>3</default>
+      <constraints>
+        <minimum>0</minimum>
+        <maximum>10</maximum>
+        <step>1</step>
+      </constraints>
+    </integer>
+    <integer>
+      <name>iterationNumber</name>
+      <longflag>maxit</longflag>
+      <description>Maximal number of iteration of the trimmed least square approach to perform per total</description>
+      <label>Iteration number</label>
+      <default>300</default>
+      <constraints>
+        <minimum>0</minimum>
+        <maximum>50000</maximum>
+        <step>1</step>
+      </constraints>
+    </integer>
+    <boolean>
+      <name>NoConjugateGradient</name>
+      <longflag>noConj</longflag>
+      <description>By default a conjugate gradient ascent is used. Active this option to use a steepest gradient ascent scheme.</description>
+      <label>no conj. grad. ascent</label>
+      <default>false</default>
+    </boolean>
+    <boolean>
+      <name>NoPyramid</name>
+      <longflag>nopy</longflag>
+      <description>Active this option to perform every level at full resolution</description>
+      <label>no pyramid</label>
+      <default>false</default>
+    </boolean>
+    <integer-enumeration>
+      <name>interpolation</name>
+      <longflag>interp</longflag>
+      <description>Interpolation order to use internally to warp the floating image</description>
+      <label>Interpolation order</label>
+      <default>1</default>
+      <element>0</element>
+      <element>1</element>
+      <element>3</element>
+    </integer-enumeration>
+  </parameters>
+  <parameters advanced="true">
+    <label>F3D2 options</label>
+    <description>Flag and argument to use the stationary velocity field parametrisation</description>
+    <boolean>
+      <name>useVel</name>
+      <longflag>vel</longflag>
+      <description>Performs a symmetric registration where both, forward and backward transformations are optimised. The transformation are parametrised using a stationary velocity field</description>
+      <label>Use F3D2</label>
+      <default>false</default>
+    </boolean>
+    <image fileExtensions=".nii,.nii.gz,.nrrd,.png">      <name>floatingMaskImageName</name>
+      <longflag>fmask</longflag>
+      <description>Floating mask image filename</description>
+      <label>Flo. mask</label>
+      <default></default>
+      <channel>input</channel>
+    </image>  </parameters>
+</executable>

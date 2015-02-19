@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Registration.NiftyReg</category>
+  <title>RegTools (NiftyReg)</title>
+  <description><![CDATA[NiftyReg module under construction]]></description>
+  <version>0.0.1</version>
+  <documentation-url>http://cmic.cs.ucl.ac.uk/home/software/</documentation-url>
+  <license>BSD</license>
+  <contributor>Marc Modat (UCL)</contributor>
+  <parameters advanced="false">
+    <label>Input and Output</label>
+    <description>Input image (mandatory)</description>
+    <image fileExtensions=".nii,.nii.gz,.nrrd,.png">
+      <name>inputImageName</name>
+      <longflag>in</longflag>
+      <description>Input image filename</description>
+      <label>Input image</label>
+      <default>required</default>
+      <channel>input</channel>
+    </image>
+  </parameters>
+  <parameters advanced="true">
+    <label>Image Conversions</label>
+    <description>Image conversion tasks to perform on the input image.</description>
+    <boolean>
+      <name>convertToFloat</name>
+      <longflag>float</longflag>
+      <description>The input image is converted to float</description>
+      <label>Convert to float</label>
+      <default></default>
+    </boolean>
+    <boolean>
+      <name>downSample</name>
+      <longflag>down</longflag>
+      <description>The input image is downsampled 2 times</description>
+      <label>Downsample</label>
+      <default></default>
+    </boolean>
+    <boolean>
+      <name>binarize</name>
+      <longflag>bin</longflag>
+      <description>Binarise the input image <![CDATA[(val!=0?val=1:val=0)]]> </description>
+      <label>Binarize</label>
+      <default></default>
+    </boolean>
+    <boolean>
+      <name>isotropic</name>
+      <longflag>iso</longflag>
+      <description>The resulting image is made isotropic</description>
+      <label>Make Isotropic</label>
+      <default></default>
+    </boolean>
+  </parameters>
+  <parameters advanced="true">
+    <label>Constant Arithmetics</label>
+    <description>Constant Arithmetics.</description>
+    <float>
+      <name>addConst</name>
+      <longflag>add</longflag>
+      <description>Add the constant value to the input image</description>
+      <label>Add</label>
+      <default>none</default>
+    </float>
+    <float>
+      <name>subConst</name>
+      <longflag>sub</longflag>
+      <description>Subtract the constant value from the input image</description>
+      <label>Subtract</label>
+      <default>none</default>
+    </float>
+    <float>
+      <name>mulConst</name>
+      <longflag>mul</longflag>
+      <description>Multiply the input image with the constant value</description>
+      <label>Multiply</label>
+      <default>none</default>
+    </float>
+    <float>
+      <name>divConst</name>
+      <longflag>div</longflag>
+      <description>Divide the input image with the constant value</description>
+      <label>Divide</label>
+      <default>none</default>
+    </float>
+  </parameters>
+  <parameters advanced="true">
+    <label>Smoothing and Thresholding</label>
+    <description>Smoothing and thresholding operations.</description>
+    <float>
+      <name>smooth</name>
+      <longflag>smo</longflag>
+      <description>The input image is smoothed using a cubic b-spline kernel</description>
+      <label>Smooth (B-Spline)</label>
+      <default>none</default>
+    </float>
+    <float-vector>
+      <name>smooth</name>
+      <longflag>smoG</longflag>
+      <description>The input image is smoothed using Gaussian kernel</description>
+      <label>Smooth (Gaussian)</label>
+      <default>none</default>
+    </float-vector>
+    <float>
+      <name>threshold</name>
+      <longflag>thr</longflag>
+      <description>Threshold the input image <![CDATA[(val<thr?val=0:val=1)]]> </description>
+      <label>Threshold image</label>
+      <default></default>
+    </float>
+  </parameters>
+  <parameters advanced="true">
+    <label>Options</label>
+    <description>Various image processing tasks that require two images.</description>
+    <image fileExtensions=".nii,.nii.gz,.nrrd,.png">
+      <name>rmsImages</name>
+      <longflag>rms</longflag>
+      <description>Compute the mean rms between this image and the input image</description>
+      <label>Compute RMS </label>
+      <default></default>
+      <channel>input</channel>
+    </image>
+    <image fileExtensions=".nii,.nii.gz,.nrrd,.png">
+      <name>maskImage</name>
+      <longflag>nan</longflag>
+      <description>This image is used to mask the input image. Voxels outside of the mask are set to nan</description>
+      <label>Mask Image</label>
+      <default></default>
+      <channel>input</channel>
+    </image>
+    <image fileExtensions=".nii,.nii.gz,.nrrd,.png">
+      <name>addImage</name>
+      <longflag>add</longflag>
+      <description>This image is added to the input image</description>
+      <label>Add Images</label>
+      <default></default>
+      <channel>input</channel>
+    </image>
+    <image fileExtensions=".nii,.nii.gz,.nrrd,.png">
+      <name>subtractImage</name>
+      <longflag>sub</longflag>
+      <description>This image is subtracted from the input image</description>
+      <label>Subtract Images</label>
+      <default></default>
+      <channel>input</channel>
+    </image>
+    <image fileExtensions=".nii,.nii.gz,.nrrd,.png">
+      <name>multiplyImage</name>
+      <longflag>mul</longflag>
+      <description>This image is multiplied with input image</description>
+      <label>Multiply Images</label>
+      <default></default>
+      <channel>input</channel>
+    </image>
+    <image fileExtensions=".nii,.nii.gz,.nrrd,.png">
+      <name>divideImage</name>
+      <longflag>div</longflag>
+      <description>The input image is divided by this image</description>
+      <label>Divide Input Image</label>
+      <default></default>
+      <channel>input</channel>
+    </image>
+  </parameters>
+</executable>
