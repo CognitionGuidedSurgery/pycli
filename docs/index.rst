@@ -6,8 +6,43 @@
 Welcome to clictk's documentation!
 ==================================
 
+
+clictk provides support for Common Toolkit's Command Line Interface XML descriptions.
+It provides a Python model, can read and write XML description, argparse functionalities and calls CLIs.
+
+
 Getting Started
 ---------------
+
+
+Install via pip::
+
+    $ pip install pyclictk
+
+
+Work Cases
+----------
+
+Working with CLIs
+~~~~~~~~~~~~~~~~~
+
+.. code-block::
+
+   m = clictk.Executable.from_exec("reg_aladin")
+   m = clictk.Executable.from_xml("reg_aladin.xml")
+
+   print repr(m)
+
+
+Python as Executable
+~~~~~~~~~~~~~~~~~~~~
+
+.. code-block::
+
+   e = Executable(
+    ...
+    )
+
 
 Interface
 ---------

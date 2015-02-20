@@ -1,7 +1,3 @@
-"""
-
-"""
-
 import xml.etree.ElementTree as ET
 import subprocess
 
@@ -46,8 +42,8 @@ class ParameterGroup(list):
 
     def as_xml(self):
         root = ET.Element("parameters", {'advanced': str(self.advanced)})
-        ET.SubElement(root, "label").text=str(self.label)
-        ET.SubElement(root, "description").text=str(self.description)
+        ET.SubElement(root, "label").text = str(self.label)
+        ET.SubElement(root, "description").text = str(self.description)
 
         for p in self.parameters:
             root.append(p.as_xml())
@@ -59,7 +55,13 @@ class ParameterGroup(list):
                self.__dict__
 
     def __getitem__(self, item):
-        return self.parameters.__getitem__(item)
+        if isinstance(item, str):
+            for p in self:
+                if p.name == item:
+                    return p
+            raise KeyError("Could not find Parameter %s" % item)
+        else:
+            return self.parameters.__getitem__(item)
 
     def __setitem__(self, key, value):
         return self.parameters.__setitem__(key, value)
@@ -73,6 +75,26 @@ class ParameterGroup(list):
     def __getslice__(self, i, j):
         return self.parameters.__getslice__(i, j)
 
+    def __eq__(self, other):
+        if isinstance(other, ParameterGroup) and other is not None:
+            try:
+                l = True
+                for p in self.parameters:
+                    po = other[p.name]
+                    l = l and po == p
+
+                for p in other.parameters:
+                    po = self[p.name]
+                    l = l and po == p
+
+            except KeyError:
+                l = False
+
+            return l and self.advanced == other.advanced and self.label == other.label and \
+                   self.description == other.description
+        else:
+            return False
+
 
 class Parameter(object):
     """Represents a CLI parameter.
@@ -84,7 +106,7 @@ class Parameter(object):
                   'index', 'label', 'longflag')
 
     def __init__(self, name, type, default, description=None, channel=None, values=None,
-                 index=None, label=None, longflag=None, file_ext=None):
+                 flag=None, index=None, label=None, longflag=None, file_ext=None):
         self.name = name
         """The unique name (within this module) of the parameter. This is only used internally.
         Pattern::
@@ -143,6 +165,12 @@ class Parameter(object):
         :type: str
         """
 
+        self.flag = flag
+        """
+
+        :type: str
+        """
+
         self.label = label
         """ label for parameter.
 
@@ -176,12 +204,17 @@ class Parameter(object):
                "index=%(index)r, label=%(label)r, longflag=%(longflag)r, file_ext=%(file_ext)r)" % self.__dict__
 
 
+    def __eq__(self, other):
+        if isinstance(other, Parameter):
+            return self.__dict__ == other.__dict__
+        return False
+
     def as_xml(self):
         root = ET.Element(self.type, {'fileExtension': self.file_ext} if self.file_ext else {})
 
         for attrib in Parameter.XML_FIELDS:
             e = ET.SubElement(root, attrib)
-            e.text = str(getattr(self,attrib))
+            e.text = str(getattr(self, attrib))
 
         return root
 
@@ -339,7 +372,7 @@ class Executable(object):
         """Iterate over all parameters in this executable
         :returns: Iterable
         """
-        return chain(self.parameter_groups)
+        return chain(*self.parameter_groups)
 
 
     def __repr__(self):
@@ -347,6 +380,36 @@ class Executable(object):
                "license=%(license)r, contributor=%(contributor)r, acknowledgements=%(acknowledgements)r, documentation_url=%(documentation_url)r," \
                "parameter_groups=%(parameter_groups)r)" % self.__dict__
 
+
+    def cmdline(self, **kwargs):
+        args = [self.executable]
+
+        for key, value in kwargs.iteritems():
+            parameter = self[key]
+            if value != parameter.default:
+                args.append("--%s" % parameter.longflag)
+                args.append(str(value))
+
+        return args
+
+    def __getitem__(self, item):
+        for p in self:
+            if p.name == item:
+                return p
+        raise KeyError("Parameter %s not found" % item)
+
+    def __eq__(self, other):
+        if isinstance(other, Executable) and other is not None:
+            return all((other.executable == self.executable,
+                        other.version == self.version,
+                        other.acknowledgements == self.acknowledgements,
+                        other.contributor == self.contributor,
+                        other.documentation_url == self.documentation_url,
+                        other.description == self.description,
+                        other.title == self.title,
+                        other.parameter_groups == self.parameter_groups))
+        else:
+            return False
 
     @staticmethod
     def from_exe(executable):
@@ -392,6 +455,7 @@ class Executable(object):
         exe = Executable(tree)
 
         exe.category = tree.findtext('category')
+        exe.version = tree.findtext('version')
         exe.title = tree.findtext('title') or exe.name
         exe.description = tree.findtext('description')
         exe.license = tree.findtext('license') or "unknown"
