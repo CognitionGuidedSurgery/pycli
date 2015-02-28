@@ -23,7 +23,7 @@ def prettify(elem):
 from clictk import *
 
 
-class BaseTests(unittest.TestCase):
+class ReadTests(unittest.TestCase):
     def test_compare_ok(self):
         ref1 = Executable(executable=None, category='Registration.NiftyReg', title='RegAladin (NiftyReg)',
                           description='Module/executable for global registration (rigid and/or affine) based on a block-matching approach and a trimmed least squared optimisation.',

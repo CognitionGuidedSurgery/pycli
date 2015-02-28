@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='pyclictk',
-    version='0.1',
+    version='0.2',
     packages=['clictk'],
     provides=['clictk'],
     url='http://github.com/CognitionGuidedSurgery/pyclictk',

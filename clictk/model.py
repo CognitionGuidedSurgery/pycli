@@ -1,5 +1,6 @@
 import xml.etree.ElementTree as ET
 import subprocess
+from itertools import chain
 
 __all__ = ["Parameter", "ParameterGroup", "Executable", "XMLArgumentNotSupportedByExecutable"]
 
@@ -261,9 +262,6 @@ class Parameter(object):
                          longflag=longflag, file_ext=file_ext)
 
 
-from itertools import chain
-
-
 class Executable(object):
     """Represents an CLI executable.
 
@@ -382,15 +380,28 @@ class Executable(object):
 
 
     def cmdline(self, **kwargs):
+        """Generates a valid command line call for the executable given by call arguments in `kwargs`
+        :param kwargs: values to call the executable
+        :return: the command line
+        :rtype: list
+        """
+
         args = [self.executable]
+        indexed_args = []
 
         for key, value in kwargs.iteritems():
             parameter = self[key]
             if value != parameter.default:
-                args.append("--%s" % parameter.longflag)
-                args.append(str(value))
+                if parameter.longflag:  # use longflag where possible
+                    args.append("--%s" % parameter.longflag)
+                    args.append(str(value))
+                elif parameter.flag:
+                    args.append("-%s" % parameter.flag)
+                    args.append(str(value))
+                elif parameter.index:
+                    indexed_args.insert(int(parameter.index), str(value))
 
-        return args
+        return args + indexed_args
 
     def __getitem__(self, item):
         for p in self:
@@ -431,7 +442,6 @@ class Executable(object):
         else:
             raise XMLArgumentNotSupportedByExecutable("called %s got %s" % (command, sp.returncode))
 
-
     @staticmethod
     def from_xml(filename):
         """
@@ -441,7 +451,6 @@ class Executable(object):
         """
         tree = ET.parse(filename)
         return Executable.from_etree(tree)
-
 
     @staticmethod
     def from_etree(tree):
