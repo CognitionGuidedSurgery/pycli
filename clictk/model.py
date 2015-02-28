@@ -392,16 +392,31 @@ class Executable(object):
         for key, value in kwargs.iteritems():
             parameter = self[key]
             if value != parameter.default:
+                no_value = parameter.type == 'boolean'
+
                 if parameter.longflag:  # use longflag where possible
                     args.append("--%s" % parameter.longflag)
-                    args.append(str(value))
+                    if no_value:
+                        args.append(str(value))
                 elif parameter.flag:
                     args.append("-%s" % parameter.flag)
-                    args.append(str(value))
+                    if no_value:
+                        args.append(str(value))
                 elif parameter.index:
                     indexed_args.insert(int(parameter.index), str(value))
 
         return args + indexed_args
+
+
+    def run(self, **kwargs):
+        """runs the executable
+
+        :param kwargs:
+        :return:  a dictionary with the output channels values
+        """
+
+        # subprocess.Popen...
+        pass
 
     def __getitem__(self, item):
         for p in self:
@@ -481,7 +496,7 @@ class Executable(object):
 
             exe.parameter_groups.append(paras)
 
-            return exe
+        return exe
 
 
 class XMLArgumentNotSupportedByExecutable(Exception):

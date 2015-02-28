@@ -248,3 +248,7 @@ class ArgParseTest(unittest.TestCase):
         executable = clictk.Executable.from_xml(os.path.join(ROOT, "reg_aladin.xml"))
         argparse = build_argument_parser(executable)
         argparse.print_help()
+
+    def test_docopt(self):
+        executable = clictk.Executable.from_xml(os.path.join(ROOT, "reg_aladin.xml"))
+        print build_docopt(executable)
