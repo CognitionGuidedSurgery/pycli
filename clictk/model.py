@@ -108,6 +108,7 @@ class Parameter(object):
 
     def __init__(self, name, type, default, description=None, channel=None, values=None,
                  flag=None, index=None, label=None, longflag=None, file_ext=None):
+
         self.name = name
         """The unique name (within this module) of the parameter. This is only used internally.
         Pattern::
@@ -350,6 +351,10 @@ class Executable(object):
 
         :type: str
         """
+
+    @property
+    def name(self):
+        return self.title or self.executable
 
     XML_FIELDS = ('version', 'description', 'title', 'category', 'license',
                   'contributor', 'documentation_url', 'acknowledgements')
