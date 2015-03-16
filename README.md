@@ -1,7 +1,7 @@
 # pyclictk
 
 
-[![Circle CI](https://circleci.com/gh/CognitionGuidedSurgery/pycli.svg?style=svg)](https://circleci.com/gh/CognitionGuidedSurgery/pycli)
+[![Circle CI](https://circleci.com/gh/CognitionGuidedSurgery/pyclictk.svg?style=svg)](https://circleci.com/gh/CognitionGuidedSurgery/pyclictk)
 [![Documentation Status](https://readthedocs.org/projects/pyclictk/badge/?version=latest)](https://readthedocs.org/projects/pyclictk/?badge=latest)
 
 
