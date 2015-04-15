@@ -3,8 +3,17 @@ from __future__ import absolute_import
 from argparse import ArgumentParser
 
 
+def prettify(elem):
+    """Return a pretty-printed XML string for the Element.
+    """
+    from xml.etree import ElementTree
+    return ElementTree.tostring(elem, 'utf-8')
+
+
 def build_argument_parser(executable):
     """creates an argument parser from the given `executable` model.
+
+    An argument '__xml__' for "--xml" is added independently.
 
     :param executable: CLI Model
     :type executable: clictk.model.Executable
@@ -23,7 +32,7 @@ def build_argument_parser(executable):
             metavar=p.type.upper(),
             dest=p.name,
             action="store",
-            help=p.description
+            help=(p.description.strip() or "parameter %s" % p.name)
         )
 
     return a

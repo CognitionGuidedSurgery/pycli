@@ -5,14 +5,14 @@ from itertools import chain
 __all__ = ["Parameter", "ParameterGroup", "Executable", "XMLArgumentNotSupportedByExecutable"]
 
 
-class ParameterGroup(list):
+class ParameterGroup(object):
     """A list of multiple :py:class:`Parameter`.
 
     XML: Starts a group of parameters.
     """
 
     def __init__(self, label=None, description=None, advanced=None, parameters=None):
-        self.parameters = parameters
+        self.parameters = parameters or list()
         """
 
         :type: list[Parameter]
@@ -42,7 +42,7 @@ class ParameterGroup(list):
         """
 
     def as_xml(self):
-        root = ET.Element("parameters", {'advanced': str(self.advanced)})
+        root = ET.Element("parameters", {'advanced': str(self.advanced).lower()})
         ET.SubElement(root, "label").text = str(self.label)
         ET.SubElement(root, "description").text = str(self.description)
 
@@ -54,6 +54,9 @@ class ParameterGroup(list):
     def __repr__(self):
         return "ParameterGroup(label=%(label)r, description=%(description)r, advanced=%(advanced)r, parameters=%(parameters)s )" % \
                self.__dict__
+
+    def append(self, parameter):
+        self.parameters.append(parameter)
 
     def __getitem__(self, item):
         if isinstance(item, str):
@@ -71,7 +74,9 @@ class ParameterGroup(list):
         return self.parameters.__setslice__(i, j, sequence)
 
     def __iter__(self):
-        return self.parameters.__iter__()
+        if self.parameters:
+            return iter(self.parameters)
+        return tuple()
 
     def __getslice__(self, i, j):
         return self.parameters.__getslice__(i, j)
@@ -103,8 +108,15 @@ class Parameter(object):
     You must either specify "flag" or "longflag" (or both) or "index".
     """
 
-    XML_FIELDS = ('name', 'default', 'description', 'channel',
-                  'index', 'label', 'longflag')
+    XML_FIELDS = ('name',
+                  'index',
+                  'flag',
+                  'longflag',
+                  'description',
+                  'label',
+                  'default',
+                  'channel',
+                  'hidden')
 
     def __init__(self, name, type, default, description=None, channel=None, values=None,
                  flag=None, index=None, label=None, longflag=None, file_ext=None):
@@ -132,7 +144,7 @@ class Parameter(object):
         :type: str
         """
 
-        self.description = description
+        self.description = description or " "
         """A brief description of the parameter.
 
         :type: str
@@ -173,7 +185,7 @@ class Parameter(object):
         :type: str
         """
 
-        self.label = label
+        self.label = label or name
         """ label for parameter.
 
 
@@ -212,11 +224,15 @@ class Parameter(object):
         return False
 
     def as_xml(self):
-        root = ET.Element(self.type, {'fileExtension': self.file_ext} if self.file_ext else {})
+        root = ET.Element(self.type,
+                          {'fileExtension': self.file_ext} if self.file_ext else {})
 
         for attrib in Parameter.XML_FIELDS:
-            e = ET.SubElement(root, attrib)
-            e.text = str(getattr(self, attrib))
+            value = getattr(self, attrib)
+            if value:
+                xml_name = attrib.replace("_", "-")
+                e = ET.SubElement(root, xml_name)
+                e.text = str(value)
 
         return root
 
@@ -307,13 +323,13 @@ class Executable(object):
 
         self.title = title
         """A human-readable name for the module
-
+        **required** for valid xml!
         :type: str
         """
 
-        self.description = description
+        self.description = description or str()
         """A detailed description of the modules purpose
-
+        **required** for valid xml!
         :type: str
         """
 
@@ -356,15 +372,24 @@ class Executable(object):
     def name(self):
         return self.title or self.executable
 
-    XML_FIELDS = ('version', 'description', 'title', 'category', 'license',
-                  'contributor', 'documentation_url', 'acknowledgements')
+    XML_FIELDS = ('category',
+                  'title',
+                  'description',
+                  'version',
+                  'documentation_url',
+                  'license',
+                  'contributor',
+                  'acknowledgements')
 
     def as_xml(self):
         root = ET.Element("executable")
 
         for attrib in self.XML_FIELDS:
-            se = ET.SubElement(root, attrib)
-            se.text = getattr(self, attrib)
+            value = getattr(self, attrib)
+            if value:
+                xml_name = attrib.replace("_", "-")
+                se = ET.SubElement(root, xml_name)
+                se.text = str(value)
 
         for element in self.parameter_groups:
             root.append(element.as_xml())
