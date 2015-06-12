@@ -76,7 +76,7 @@ class ParameterGroup(object):
     def __iter__(self):
         if self.parameters:
             return iter(self.parameters)
-        return tuple()
+        return iter(tuple())
 
     def __getslice__(self, i, j):
         return self.parameters.__getslice__(i, j)
@@ -534,3 +534,4 @@ class XMLArgumentNotSupportedByExecutable(Exception):
 
     """
     pass
+
